@@ -10,10 +10,10 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'recharts-vendor': ['recharts'],
-          'pdf-vendor': ['jspdf', 'jspdf-autotable'],
-          'axios-vendor': ['axios'],
+        manualChunks: (id) => {
+          if (id.includes('recharts')) return 'recharts-vendor'
+          if (id.includes('jspdf')) return 'pdf-vendor'
+          if (id.includes('axios')) return 'axios-vendor'
         }
       }
     }
