@@ -2,15 +2,17 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Redirecting...</title>
+    <title>Crime Report Management System</title>
     <script type="text/javascript">
-      // Store the path for the SPA
-      var pathname = window.location.pathname;
-      if (pathname !== '/' && !pathname.endsWith('.html')) {
-        sessionStorage.redirect = pathname + window.location.search + window.location.hash;
-        // Redirect to root
-        window.location.replace('/');
-      }
+      var pathSegmentsToKeep = 1;
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+        l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+        l.hash
+      );
     </script>
   </head>
   <body>
