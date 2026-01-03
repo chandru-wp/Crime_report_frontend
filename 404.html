@@ -5,9 +5,12 @@
     <title>Redirecting...</title>
     <script type="text/javascript">
       // Store the path for the SPA
-      sessionStorage.redirect = window.location.pathname + window.location.search + window.location.hash;
-      // Redirect to root
-      window.location.pathname = '/';
+      var pathname = window.location.pathname;
+      if (pathname !== '/' && !pathname.endsWith('.html')) {
+        sessionStorage.redirect = pathname + window.location.search + window.location.hash;
+        // Redirect to root
+        window.location.replace('/');
+      }
     </script>
   </head>
   <body>
