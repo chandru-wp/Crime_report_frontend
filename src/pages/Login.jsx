@@ -27,7 +27,13 @@ export default function Login() {
         navigate("/dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+        setError("Cannot connect to server. Please try again later or check your internet connection.");
+      } else if (err.response?.status === 404) {
+        setError("Server endpoint not found. Please contact support.");
+      } else {
+        setError(err.response?.data?.message || "Login failed. Please check your credentials.");
+      }
     }
   };
 
