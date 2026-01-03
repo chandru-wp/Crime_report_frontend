@@ -93,6 +93,25 @@ export default function UserManagement() {
     }
   };
 
+  const handleDeleteUser = async (userId, userName) => {
+    if (!confirm(`Are you sure you want to delete ${userName}? This action cannot be undone.`)) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `${API_BASE_URL}/api/auth/users/${userId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setSuccess(`User ${userName} deleted successfully`);
+      setTimeout(() => setSuccess(""), 3000);
+      fetchUsers();
+    } catch (error) {
+      setError(error.response?.data?.message || "Failed to delete user");
+      setTimeout(() => setError(""), 3000);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
@@ -246,13 +265,19 @@ export default function UserManagement() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <button
                         onClick={() => handleRoleChange(u.id, u.role)}
-                        className={`px-4 py-2 rounded ${
+                        className={`px-4 py-2 rounded mr-2 ${
                           u.role === "admin"
                             ? "bg-yellow-600 hover:bg-yellow-700"
                             : "bg-green-600 hover:bg-green-700"
                         } text-white`}
                       >
                         Change to {u.role === "admin" ? "User" : "Admin"}
+                      </button>
+                      <button
+                        onClick={() => handleDeleteUser(u.id, u.name)}
+                        className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
