@@ -1,4 +1,7 @@
 // API Configuration based on environment
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isDevelopment 
+  ? 'http://localhost:5000'
+  : 'https://crime-report-backend-t9qq.onrender.com';
 
 export default API_BASE_URL;
