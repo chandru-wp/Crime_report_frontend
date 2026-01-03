@@ -6,10 +6,33 @@ export default function CrimeForm({ onSuccess }) {
   const [data, setData] = useState({
     title: "",
     description: "",
-    location: ""
+    location: "",
+    photo: ""
   });
+  const [photoPreview, setPhotoPreview] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5000000) {
+        setError("Photo size should be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setData({ ...data, photo: reader.result });
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removePhoto = () => {
+    setData({ ...data, photo: "" });
+    setPhotoPreview("");
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -29,7 +52,8 @@ export default function CrimeForm({ onSuccess }) {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert("Crime Reported Successfully");
-      setData({ title: "", description: "", location: "" });
+      setData({ title: "", description: "", location: "", photo: "" });
+      setPhotoPreview("");
       if (onSuccess) onSuccess();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to report crime");
@@ -73,6 +97,35 @@ export default function CrimeForm({ onSuccess }) {
         onChange={(e) => setData({ ...data, location: e.target.value })}
         required
       />
+      
+      {/* Photo Upload */}
+      <div className="mb-3">
+        <label className="block text-gray-700 mb-2 font-medium">Photo (Optional)</label>
+        {photoPreview ? (
+          <div className="relative">
+            <img 
+              src={photoPreview} 
+              alt="Preview" 
+              className="w-full h-48 object-cover rounded border"
+            />
+            <button
+              type="button"
+              onClick={removePhoto}
+              className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm"
+            >
+              Remove Photo
+            </button>
+          </div>
+        ) : (
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        )}
+      </div>
+
       <button 
         type="submit"
         disabled={loading}
